@@ -137,7 +137,7 @@ public class MapScreen extends AppCompatActivity implements OnMapReadyCallback, 
                 });
 //        mLocationClient.getLastLocation().addOnCompleteListener(task -> {
 //            if (task.isComplete()){
-//
+
 //            }
 //        });
     }
