@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="HardcodedText">
+
+
+    <group android:checkableBehavior="single">
+
+
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/nav_home"
+            android:title="@string/home" />
+
+        <item
+            android:id="@+id/nav_search"
+            android:icon="@drawable/search_icon"
+            android:title="@string/search" />
+
+        <item
+            android:id="@+id/nav_all_category"
+            android:icon="@drawable/nav_category"
+            android:title="@string/all_category" />
+
+        <item
+            android:id="@+id/nav_add_missing_place"
+            android:icon="@drawable/nav_add_missing_loc"
+            android:title="@string/add_missing_place" />
+
+
+    </group>
+
+    <item android:title="Categories">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_hotels"
+                    android:icon="@drawable/hotel_icon"
+                    android:title="@string/hotels" />
+
+                <item
+                    android:id="@+id/nav_restaurent"
+                    android:icon="@drawable/restaurant_icon"
+                    android:title="@string/restaurent" />
+
+                <item
+                    android:id="@+id/nav_education"
+                    android:icon="@drawable/education_icon"
+                    android:title="@string/education" />
+
+                <item
+                    android:id="@+id/nav_shops"
+                    android:icon="@drawable/shop_icon"
+                    android:title="@string/shops" />
+            </group>
+        </menu>
+    </item>
+
+    <item android:title="Profile">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_login"
+                    android:icon="@drawable/login_icon"
+                    android:title="@string/login" />
+
+                <item
+                    android:id="@+id/nav_profile"
+                    android:icon="@drawable/profile_icon"
+                    android:title="@string/profile" />
+
+                <item
+                    android:id="@+id/nav_logout"
+                    android:icon="@drawable/logout_icon"
+                    android:title="@string/logout" />
+            </group>
+        </menu>
+    </item>
+</menu>
