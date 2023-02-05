@@ -3,7 +3,6 @@ package com.example.locr.Common;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.content.IntentSender;
 import android.location.Location;
@@ -18,6 +17,7 @@ import com.example.locr.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.CurrentLocationRequest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -32,6 +32,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.CancellationTokenSource;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -122,7 +123,8 @@ public class MapScreen extends AppCompatActivity implements OnMapReadyCallback, 
     @SuppressLint("MissingPermission")
     private void getCurrLoc() {
         mLocationClient= LocationServices.getFusedLocationProviderClient(this);
-        mLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+        CancellationTokenSource cancellationTokenSource=new CancellationTokenSource();
+        mLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY,cancellationTokenSource.getToken()).addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
                         // Got last known location. In some rare situations this can be null.

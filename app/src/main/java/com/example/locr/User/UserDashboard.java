@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -20,7 +21,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.example.locr.Common.MainActivity;
 import com.example.locr.Common.MapScreen;
+import com.example.locr.HelperClasses.GpsChecker;
 import com.example.locr.HelperClasses.HomeAdapter.CategoryAdapter;
 import com.example.locr.HelperClasses.HomeAdapter.FeaturedAdapter;
 import com.example.locr.HelperClasses.HomeAdapter.MostViewedAdapter;
@@ -56,6 +59,7 @@ public class UserDashboard extends AppCompatActivity implements NavigationView.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
         checkMyPermission();
+
 //        getSupportActionBar().hide();
 
         featured_recycler=findViewById(R.id.featured_recycler);
@@ -74,29 +78,38 @@ public class UserDashboard extends AppCompatActivity implements NavigationView.O
         animateNavigationDrawer();
 
 
+
         relativeLayout3=findViewById(R.id.relativeLayout3);
 
         relativeLayout3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isLocationPermissionGranted){
+                if (isLocationPermissionGranted && isGpsEnable()){
                     Intent intent=new Intent(getApplicationContext(), MapScreen.class);
                     startActivity(intent);
 
-                }
-                else {
-                    Toast.makeText(UserDashboard.this, "Please give location access first", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
+    private boolean isGpsEnable(){
+        LocationManager locationManager=(LocationManager) getSystemService(LOCATION_SERVICE);
+        Boolean providerEnable=locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if (providerEnable) {
+            return true;
+        }else {
+            GpsChecker gpsChecker=new GpsChecker();
+            gpsChecker.turnOnGps(this, UserDashboard.this);
+        }
+        return false;
+    }
     private void checkMyPermission() {
         Dexter.withContext(this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(new PermissionListener() {
             @Override
             public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
-                Toast.makeText(UserDashboard.this, "Permission Granted", Toast.LENGTH_SHORT).show();
                 isLocationPermissionGranted=true;
+                isGpsEnable();
             }
 
             @Override
