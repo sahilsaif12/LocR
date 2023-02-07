@@ -1,35 +1,34 @@
 package com.example.locr.HelperClasses;
 
 
-import static android.content.Context.LOCATION_SERVICE;
 //import static androidx.core.content.ContextCompat.getSystemService;
 
 import androidx.annotation.NonNull;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.IntentSender;
-import android.location.LocationManager;
+import android.location.Location;
+import android.util.Log;
 
+import com.example.locr.User.UserDashboard;
 import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.CancellationTokenSource;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
-
-import com.google.android.gms.location.LocationSettingsRequest;
-
-import java.util.concurrent.Executor;
-
 public class GpsChecker {
     private static final int REQUEST_CHECK_SETTINGS = 0x1;
-
-    public void turnOnGps(Context context, Activity activity) {
+    Location cur_location;
+    public boolean turnOnGps(Context context, Activity activity) {
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setInterval(10000);
         locationRequest.setFastestInterval(5000);
@@ -45,10 +44,10 @@ public class GpsChecker {
                 // All location settings are satisfied. The client can initialize
                 // location requests here.
                 // ...
-            }
-        });
 
-        task.addOnFailureListener( new OnFailureListener() {
+            }
+
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 if (e instanceof ResolvableApiException) {
@@ -65,5 +64,9 @@ public class GpsChecker {
                 }
             }
         });
+
+        return true;
     }
+
+
 }

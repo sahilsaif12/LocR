@@ -1,16 +1,17 @@
 package com.example.locr.HelperClasses.HomeAdaptersHelperClasses;
 
 public class FeaturedHelperClass {
-    int image;
+    String image;
     String title ,desc;
 
-    public FeaturedHelperClass(int image, String title, String desc) {
+    public FeaturedHelperClass(String image, String title, String desc) {
         this.image = image;
         this.title = title;
         this.desc = desc;
     }
 
-    public int getImage() {
+
+    public String getImage() {
         return image;
     }
 

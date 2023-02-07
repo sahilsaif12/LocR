@@ -1,5 +1,22 @@
 package com.example.locr.User;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
+import android.location.Location;
+import android.location.LocationManager;
+import android.net.Uri;
+import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
@@ -7,21 +24,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.Manifest;
-import android.content.Intent;
-import android.graphics.drawable.GradientDrawable;
-import android.location.LocationManager;
-import android.net.Uri;
-import android.os.Bundle;
-import android.provider.Settings;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
-
-import com.example.locr.Common.MainActivity;
 import com.example.locr.Common.MapScreen;
 import com.example.locr.HelperClasses.GpsChecker;
 import com.example.locr.HelperClasses.HomeAdapter.CategoryAdapter;
@@ -31,6 +33,11 @@ import com.example.locr.HelperClasses.HomeAdaptersHelperClasses.CategoriesHelper
 import com.example.locr.HelperClasses.HomeAdaptersHelperClasses.FeaturedHelperClass;
 import com.example.locr.HelperClasses.HomeAdaptersHelperClasses.MostViewedHelperClass;
 import com.example.locr.R;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.CancellationTokenSource;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
@@ -39,11 +46,23 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class UserDashboard extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     static final float END_SCALE=0.7f;
+    public static double lat,lon;
     public static Boolean isLocationPermissionGranted;
     RecyclerView featured_recycler,most_viewed_recycler,category_recycler;
     RecyclerView.Adapter adapter;
@@ -53,6 +72,7 @@ public class UserDashboard extends AppCompatActivity implements NavigationView.O
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     LinearLayout contentView;
+    TextView viewAllCategory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,19 +111,104 @@ public class UserDashboard extends AppCompatActivity implements NavigationView.O
                 }
             }
         });
+
+        // view all category
+        viewAllCategory=findViewById(R.id.view_all_category);
+        viewAllCategory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(),AllCategories.class));
+            }
+        });
+
+
+        // saving current lat and long
+
+//        try {
+//            setData();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+
+    }
+
+    private void setData() throws IOException {
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                // Do network action in this function
+                OkHttpClient client = new OkHttpClient().newBuilder()
+                        .build();
+                Request request = new Request.Builder()
+                        .url("https://api.geoapify.com/v2/places?categories=healthcare.pharmacy&filter=circle:74.0855134,15.3004543,100000&bias=proximity:74.0855134,15.3004543&limit=20&apiKey=fc2737e59a8a4b9d892fd638d2190116")
+                        .method("GET", null)
+                        .build();
+                Response response = null;
+                try {
+                    response = client.newCall(request).execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    String s=response.body().string();
+                    JSONObject jsonObject=new JSONObject(s);
+                    JSONArray ss=jsonObject.getJSONArray("features");
+
+//                    Log.d("response", );
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+
     }
 
     private boolean isGpsEnable(){
         LocationManager locationManager=(LocationManager) getSystemService(LOCATION_SERVICE);
-        Boolean providerEnable=locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        boolean providerEnable=locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         if (providerEnable) {
+            getCurrentLatLon();
             return true;
         }else {
             GpsChecker gpsChecker=new GpsChecker();
             gpsChecker.turnOnGps(this, UserDashboard.this);
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() { // Function runs every MINUTES minutes.
+                    Log.d("k","running");
+                    if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                        getCurrentLatLon();
+                        timer.cancel();
+                    }
+                }
+            }, 0, 1000);
+
+
         }
         return false;
     }
+
+
+    @SuppressLint("MissingPermission")
+    public void getCurrentLatLon() {
+        FusedLocationProviderClient mLocationClient= LocationServices.getFusedLocationProviderClient(this);
+        CancellationTokenSource cancellationTokenSource=new CancellationTokenSource();
+        mLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY,cancellationTokenSource.getToken()).addOnSuccessListener(this, new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                // Got last known location. In some rare situations this can be null.
+                if (location != null) {
+                    lat=location.getLatitude();
+                    lon=location.getLongitude();
+                    Log.d("latlon",lat+" : "+lon);
+                }
+            }
+        });
+    }
+
     private void checkMyPermission() {
         Dexter.withContext(this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(new PermissionListener() {
             @Override
@@ -200,17 +305,28 @@ public class UserDashboard extends AppCompatActivity implements NavigationView.O
         gradient7 = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{0xFFFB9D8C, 0xFFC5BDBD});
         gradient8 = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{0x92FFDE03, 0xFFC5BDBD});
 
+        gradient1.setCornerRadius(20.0F);
+        gradient2.setCornerRadius(20.0F);
+        gradient3.setCornerRadius(20.0F);
+        gradient4.setCornerRadius(20.0F);
+        gradient5.setCornerRadius(20.0F);
+        gradient6.setCornerRadius(20.0F);
+        gradient7.setCornerRadius(20.0F);
+        gradient8.setCornerRadius(20.0F);
+
         category_recycler.setHasFixedSize(true);
         category_recycler.setLayoutManager(new LinearLayoutManager (this,LinearLayoutManager.HORIZONTAL,false));
         ArrayList<CategoriesHelperClass> category= new ArrayList<>();
-        category.add(new CategoriesHelperClass(gradient1,R.drawable.restaurent_category,"Restaurent"));
-        category.add(new CategoriesHelperClass(gradient2,R.drawable.cinema_category,"Cinemall Hall"));
-        category.add(new CategoriesHelperClass(gradient3,R.drawable.petrol_category,"Petrol Pump"));
-        category.add(new CategoriesHelperClass(gradient4,R.drawable.education_category,"Institutions"));
-        category.add(new CategoriesHelperClass(gradient5,R.drawable.hotel_category,"Hotels"));
-        category.add(new CategoriesHelperClass(gradient6,R.drawable.train_staion_category,"Train Station"));
-        category.add(new CategoriesHelperClass(gradient7,R.drawable.beach_category,"Beach"));
-        category.add(new CategoriesHelperClass(gradient8,R.drawable.shop_category,"Shops"));
+        category.add(new CategoriesHelperClass(gradient1,R.drawable.restaurent_category,"Restaurent","catering.restaurant"));
+        category.add(new CategoriesHelperClass(gradient2,R.drawable.cinema_category,"Cinemall Hall","entertainment.cinema"));
+        category.add(new CategoriesHelperClass(gradient3,R.drawable.hospital_category,"Hospital","healthcare.hospital"));
+        category.add(new CategoriesHelperClass(gradient4,R.drawable.train_staion_category,"Train Station","public_transport.train"));
+        category.add(new CategoriesHelperClass(gradient5,R.drawable.police_station_category,"Police Station","service.police"));
+        category.add(new CategoriesHelperClass(gradient6,R.drawable.hotel_category,"Hotels","accommodation.hotel"));
+
+        category.add(new CategoriesHelperClass(gradient7,R.drawable.coffee_category,"Tea Or Coffee","commercial.food_and_drink.coffee_and_tea"));
+        category.add(new CategoriesHelperClass(gradient8,R.drawable.park_category,"Park","leisure.park"));
+
         adapter=new CategoryAdapter(category);
         category_recycler.setAdapter(adapter);
     }
@@ -219,9 +335,9 @@ public class UserDashboard extends AppCompatActivity implements NavigationView.O
         featured_recycler.setHasFixedSize(true);
         featured_recycler.setLayoutManager(new LinearLayoutManager (this,LinearLayoutManager.HORIZONTAL,false));
         ArrayList<FeaturedHelperClass> featuredLocations= new ArrayList<>();
-        featuredLocations.add(new FeaturedHelperClass(R.drawable.demo_img1,"Carnival Cinemas","best cinema hall for all language movies with resonable price"));
-        featuredLocations.add(new FeaturedHelperClass(R.drawable.demo_img2,"Nico park","For spending fun time with friends or family or special ones , its the best"));
-        featuredLocations.add(new FeaturedHelperClass(R.drawable.demo_img3,"Howrah Bridge","best and iconic place to visit in kolkata"));
+        featuredLocations.add(new FeaturedHelperClass("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Sealdah_Railway_Station_-_Kolkata_2011-10-03_030250.JPG/400px-Sealdah_Railway_Station_-_Kolkata_2011-10-03_030250.JPG","Carnival Cinemas","best cinema hall for all language movies with resonable price"));
+        featuredLocations.add(new FeaturedHelperClass("https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Howrah_bridge_at_night.jpg/400px-Howrah_bridge_at_night.jpg","Nico park","For spending fun time with friends or family or special ones , its the best"));
+//        featuredLocations.add(new FeaturedHelperClass(R.drawable.demo_img3,"Howrah Bridge","best and iconic place to visit in kolkata"));
 
         adapter=new FeaturedAdapter(featuredLocations);
         featured_recycler.setAdapter(adapter);
@@ -242,6 +358,10 @@ public class UserDashboard extends AppCompatActivity implements NavigationView.O
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.nav_all_category:
+                startActivity(new Intent(getApplicationContext(),AllCategories.class));
+        }
         return true;
     }
 }

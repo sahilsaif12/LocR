@@ -19,7 +19,7 @@
             android:id="@+id/featured_img"
             android:layout_width="match_parent"
             android:layout_height="107dp"
-            android:src="@drawable/img" />
+            android:src="@drawable/park_category" />
 
         <TextView
             android:id="@+id/featured_title"

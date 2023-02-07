@@ -5,11 +5,12 @@ import android.graphics.drawable.GradientDrawable;
 public class CategoriesHelperClass {
     int image;
     GradientDrawable gradient;
-    String title ;
+    String title,id ;
 
-    public CategoriesHelperClass(GradientDrawable gradient,int image, String title) {
+    public CategoriesHelperClass(GradientDrawable gradient,int image, String title,String id) {
         this.image = image;
         this.title = title;
+        this.id = id;
         this.gradient=gradient;
     }
 
@@ -24,6 +25,10 @@ public class CategoriesHelperClass {
 
     public String getTitle() {
         return title;
+    }
+
+    public String getId() {
+        return id;
     }
 
 

@@ -100,7 +100,6 @@ public class OnBoarding extends AppCompatActivity {
     public void getStarted(View view) {
         startActivity(new Intent(getApplicationContext(), UserDashboard.class));
     }
-
     public void next(View view) {
         slider.setCurrentItem(current_pos+1);
     }

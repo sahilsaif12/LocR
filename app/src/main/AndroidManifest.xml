@@ -16,7 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
         tools:targetApi="31">
-
+        <activity
+            android:name=".User.AllCategories"
+            android:exported="false" />
         <activity
             android:name=".Common.MapScreen"
             android:exported="false" />

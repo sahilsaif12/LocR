@@ -34,7 +34,6 @@
         <RelativeLayout
             android:id="@+id/relativeLayout2"
             android:layout_width="360dp"
-
             android:layout_height="46dp"
             app:layout_constraintBottom_toTopOf="@+id/textView"
             app:layout_constraintEnd_toEndOf="parent"
@@ -63,8 +62,8 @@
         </RelativeLayout>
 
         <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="672dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:paddingStart="2dp"
             android:paddingRight="2dp"
             android:scrollbars="none"
@@ -327,7 +326,7 @@
                         android:textSize="26sp" />
 
                     <TextView
-                        android:id="@+id/textView6"
+                        android:id="@+id/sd"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
@@ -347,7 +346,7 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="170dp"
+                    android:layout_height="180dp"
                     android:layout_marginTop="10dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.504"
@@ -368,7 +367,7 @@
                         android:textSize="26sp" />
 
                     <TextView
-                        android:id="@+id/textView6"
+                        android:id="@+id/view_all_category"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"
@@ -380,12 +379,29 @@
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/category_recycler"
+
                         android:layout_width="match_parent"
                         android:layout_height="140dp"
                         android:layout_alignParentBottom="true"
                         android:layout_marginBottom="10dp" />
                 </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/aladin"
+                    android:gravity="center"
+                    android:letterSpacing="0.1"
+                    android:text="@string/app_name"
+                    android:textColor="#363636"
+                    android:textSize="40sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/relativeLayout2" />
             </LinearLayout>
+
         </ScrollView>
 
     </LinearLayout>
