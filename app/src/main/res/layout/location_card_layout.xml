@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/catagory_box"
+    android:layout_width="match_parent"
+    android:layout_height="130dp"
+    android:layout_margin="8sp"
+
+    app:cardCornerRadius="10dp"
+    app:cardElevation="8dp">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="8dp"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="12dp"
+            android:gravity="center|right"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/location_img"
+                android:layout_width="55dp"
+                android:layout_height="40dp"
+                android:src="@drawable/park_category" />
+
+            <TextView
+                android:id="@+id/location_name"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:backgroundTint="#3128B6"
+                android:fontFamily="@font/baloo"
+                android:gravity="center_vertical"
+                android:lineSpacingExtra="-6sp"
+                android:maxWidth="180dp"
+                android:text="Carnival Cinemas jflkdjflkj kdjf  fjdlkl djflkdj dlfkdj dhhkdjh fhkjdhksj,dkdlkjdk "
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/location_distance"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableRight="@drawable/direction_icon"
+                android:gravity="right"
+                android:text="TextView" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:id="@+id/location_address"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:drawableStart="@drawable/location_icon"
+                android:gravity="center_vertical"
+                android:text="TextView"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/get_location_direction"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="@drawable/rounded_corner"
+                android:backgroundTint="#D5F8A418"
+                android:insetTop="0dp"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:text="Get Direction"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

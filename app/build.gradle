@@ -1,5 +1,7 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+
 }
 
 android {
@@ -12,6 +14,9 @@ android {
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
+        manifestPlaceholders = [
+                appAuthRedirectScheme: 'io.identityserver.demo'
+        ]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -40,6 +45,5 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:21.0.1'
     implementation 'com.karumi:dexter:6.2.3'
     implementation 'com.squareup.picasso:picasso:2.8'
-
 
 }

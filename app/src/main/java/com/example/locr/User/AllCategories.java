@@ -4,25 +4,38 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
+import com.example.locr.HelperClasses.CategoryViewInterface;
+import com.example.locr.HelperClasses.FetchingData;
 import com.example.locr.HelperClasses.HomeAdapter.CategoryAdapter;
 import com.example.locr.HelperClasses.HomeAdaptersHelperClasses.CategoriesHelperClass;
 import com.example.locr.R;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class AllCategories extends AppCompatActivity {
+public class AllCategories extends AppCompatActivity implements CategoryViewInterface {
 
     RecyclerView.Adapter adapter;
     RecyclerView all_category_recycler;
+    RelativeLayout loading_screen;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_categories);
         all_category_recycler=findViewById(R.id.all_category_recycler);
-
+        loading_screen=findViewById(R.id.loading_screen);
+        loading_screen.setVisibility(View.GONE);
         allCategoryRecycler();
     }
 
@@ -37,8 +50,8 @@ public class AllCategories extends AppCompatActivity {
         gradient1 = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{0xffDEB55D, 0xFFC5BDBD});
         gradient2 = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{0xff8FAF4D, 0xFFC5BDBD});
         gradient3 = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{0xFFFAA2A2, 0xFFC5BDBD});
-        gradient4 = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{0xFFC3F8FF, 0xFFC5BDBD});
-        gradient5 = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{0xFF8CA4FB, 0xFFC5BDBD});
+        gradient4 = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{0xFF8CA4FB, 0xFFC5BDBD});
+        gradient5 = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{0xCBD51E6D, 0xFFC5BDBD});
         gradient6 = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{0x7C6BFF02, 0xFFC5BDBD});
         gradient7 = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{0xFF913175, 0xFFC5BDBD});
         gradient8 = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{0x92FFDE03, 0xFFC5BDBD});
@@ -56,6 +69,7 @@ public class AllCategories extends AppCompatActivity {
         all_category_recycler.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
         ArrayList<CategoriesHelperClass> category= new ArrayList<>();
         category.add(new CategoriesHelperClass(gradient1,R.drawable.restaurent_category,"Restaurent","catering.restaurant"));
+        category.add(new CategoriesHelperClass(gradient2,R.drawable.police_station_category,"Police Station","service.police"));
         category.add(new CategoriesHelperClass(gradient7,R.drawable.cinema_category,"Cinemall Hall","entertainment.cinema"));
         category.add(new CategoriesHelperClass(gradient2,R.drawable.hospital_category,"Hospital","healthcare.hospital"));
         category.add(new CategoriesHelperClass(gradient4,R.drawable.school_category,"School","education.school"));
@@ -69,7 +83,6 @@ public class AllCategories extends AppCompatActivity {
         category.add(new CategoriesHelperClass(gradient7,R.drawable.playground_category,"Playground","leisure.playground"));
         category.add(new CategoriesHelperClass(gradient8,R.drawable.pharmacy_category,"Pharmacy","healthcare.pharmacy"));
         category.add(new CategoriesHelperClass(gradient3,R.drawable.parking_category,"Parking","parking"));
-        category.add(new CategoriesHelperClass(gradient2,R.drawable.police_station_category,"Police Station","service.police"));
         category.add(new CategoriesHelperClass(gradient1,R.drawable.ticket_category,"Booking Tickets","commercial.tickets_and_lottery"));
         category.add(new CategoriesHelperClass(gradient7,R.drawable.book_shop_category,"Books Shop","commercial.books"));
         category.add(new CategoriesHelperClass(gradient8,R.drawable.sweet_shop_category,"Sweet Shop","commercial.food_and_drink.confectionery"));
@@ -87,9 +100,53 @@ public class AllCategories extends AppCompatActivity {
         category.add(new CategoriesHelperClass(gradient2,R.drawable.furnitures_category,"Furniture","commercial.furniture_and_interior"));
         category.add(new CategoriesHelperClass(gradient4,R.drawable.water_park_category,"Water Park","entertainment.water_park"));
         category.add(new CategoriesHelperClass(gradient6,R.drawable.administrative_category,"Administrative","administrative"));
-        adapter=new CategoryAdapter(category);
+        adapter=new CategoryAdapter(category,this);
         all_category_recycler.setAdapter(adapter);
     }
 
+    public void openFeatureCategory(String category){
 
+    }
+
+
+    @Override
+    public void onItemClick(int position,ArrayList<CategoriesHelperClass> category) {
+        loading_screen.setVisibility(View.VISIBLE);
+        FetchingData fetchingData=new FetchingData();
+        try {
+            fetchingData.getLocationData(this,5000,category.get(position).getId());
+
+//            Log.d("data", String.valueOf(data));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+//                    loading_screen.setVisibility(View.GONE);
+
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() { // Function runs every MINUTES minutes.
+                    Log.d("msg", "running");
+                if (UserDashboard.data!=null) {
+
+                    Log.d("msg", "opening");
+                    Intent intent = new Intent(getApplicationContext(), SingleCategoryPlaces.class);
+                    intent.putExtra("id", category.get(position).getId());
+                    intent.putExtra("img", category.get(position).getImage());
+                    startActivity(intent);
+                    timer.cancel();
+                }
+            }
+        }, 0, 1000);
+
+    }
+
+
+    @Override
+    protected void onResume() {
+        loading_screen.setVisibility(View.GONE);
+        super.onResume();
+    }
 }

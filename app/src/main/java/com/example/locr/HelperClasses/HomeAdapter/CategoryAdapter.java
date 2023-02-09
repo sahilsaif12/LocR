@@ -10,17 +10,20 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.locr.HelperClasses.CategoryViewInterface;
 import com.example.locr.HelperClasses.HomeAdaptersHelperClasses.CategoriesHelperClass;
 import com.example.locr.R;
 
 import java.util.ArrayList;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
+    private final CategoryViewInterface categoryViewInterface;
     ArrayList<CategoriesHelperClass> category;
 
 
-    public CategoryAdapter(ArrayList<CategoriesHelperClass> category) {
+    public CategoryAdapter(ArrayList<CategoriesHelperClass> category, CategoryViewInterface categoryViewInterface) {
         this.category = category;
+        this.categoryViewInterface=categoryViewInterface;
 
     }
     @NonNull
@@ -51,9 +54,22 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         public CategoryViewHolder(@NonNull View itemView) {
             super(itemView);
             title=itemView.findViewById(R.id.category_title);
-            image=itemView.findViewById(R.id.category_img);
+            image=itemView.findViewById(R.id.location_img);
             card=itemView.findViewById(R.id.catagory_box);
 
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (categoryViewInterface!=null){
+                        int pos=getAdapterPosition();
+                        if (pos!=RecyclerView.NO_POSITION){
+                            categoryViewInterface.onItemClick(pos,category);
+                        }
+                    }
+                }
+            });
         }
+
+
     }
 }

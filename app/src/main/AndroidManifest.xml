@@ -17,6 +17,9 @@
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
         tools:targetApi="31">
         <activity
+            android:name=".User.SingleCategoryPlaces"
+            android:exported="false" />
+        <activity
             android:name=".User.AllCategories"
             android:exported="false" />
         <activity
@@ -47,6 +50,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyADJKl4O7G3DJvKzfb4ICzqmd-fNH7-2To" />
+        <meta-data
+            android:name="geoapify_key"
+            android:value="${GEOAPIFY_KEY}" />
 
         <uses-library
             android:name="org.apache.http.legacy"
