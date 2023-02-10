@@ -3,39 +3,42 @@ package com.example.locr.Common;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
 import android.annotation.SuppressLint;
-import android.content.IntentSender;
-import android.location.Location;
-import android.location.LocationManager;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.locr.R;
+import com.example.locr.User.SingleCategoryPlaces;
 import com.example.locr.User.UserDashboard;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResolvableApiException;
-import com.google.android.gms.location.CurrentLocationRequest;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.CancellationTokenSource;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MapScreen extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener {
 
@@ -45,6 +48,7 @@ public class MapScreen extends AppCompatActivity implements OnMapReadyCallback, 
     public static LatLng prev_latLng;
     private FusedLocationProviderClient mLocationClient;
     private static final int REQUEST_CHECK_SETTINGS = 0x1;
+    Double destination_lat=null,destination_lon=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,11 +63,29 @@ public class MapScreen extends AppCompatActivity implements OnMapReadyCallback, 
             public void onClick(View view) {
                 goToLocation(UserDashboard.lat,UserDashboard.lon);
 //                getCurrLoc();
+
+
             }
 
 
         });
 
+        destination_lat=getIntent().getDoubleExtra("lat",0);
+        destination_lon=getIntent().getDoubleExtra("lon",0);
+//        drawLine();
+
+
+
+
+//        if (){
+//        }
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        super.onBackPressed();
     }
 
     private void initMap() {
@@ -73,8 +95,7 @@ public class MapScreen extends AppCompatActivity implements OnMapReadyCallback, 
 //        }
     }
 
-
-    @SuppressLint("MissingPermission")
+//    @SuppressLint("MissingPermission")
 //    private void getCurrLoc() {
 //        mLocationClient= LocationServices.getFusedLocationProviderClient(this);
 //        CancellationTokenSource cancellationTokenSource=new CancellationTokenSource();
@@ -98,7 +119,72 @@ public class MapScreen extends AppCompatActivity implements OnMapReadyCallback, 
 ////        });
 //    }
 
+
+    private void drawLine() {
+        LatLng start_location=new LatLng(UserDashboard.lat, UserDashboard.lon);
+        LatLng end_location=new LatLng(destination_lat,destination_lon);
+
+//        Log.d("latlon", String.valueOf(location));
+        PolylineOptions polylineOptions = new PolylineOptions();
+        polylineOptions.add(start_location)
+                .add(end_location)
+                .color(0xFF3DBA43)
+                .width(20.0F)
+
+        ;
+        myGoogleMap.addPolyline(polylineOptions);
+
+        MarkerOptions starting_pos=new MarkerOptions();
+        starting_pos.position(start_location)
+                .icon(BitmapFromVector(getApplicationContext(),R.drawable.boy_icon));
+        myGoogleMap.addMarker(starting_pos);
+        CircleOptions starting_pos_circle=new CircleOptions();
+        starting_pos_circle.center(start_location);
+        starting_pos_circle.radius(75);
+        starting_pos_circle.fillColor(0x9F9F9F9F);
+        starting_pos_circle.strokeColor(0x00000000);
+        myGoogleMap.addCircle(starting_pos_circle);
+
+        MarkerOptions ending_pos=new MarkerOptions();
+        ending_pos.position(end_location);
+        myGoogleMap.addMarker(ending_pos);
+        CircleOptions ending_pos_circle=new CircleOptions();
+        ending_pos_circle.center(end_location);
+        ending_pos_circle.radius(75);
+        ending_pos_circle.fillColor(0x9F9F9F9F);
+        ending_pos_circle.strokeColor(0x00000000);
+        myGoogleMap.addCircle(ending_pos_circle);
+
+        CameraUpdate cameraUpdate= CameraUpdateFactory.newLatLngZoom(start_location,16);
+        myGoogleMap.moveCamera(cameraUpdate);
+        myGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
+    }
+
+    private BitmapDescriptor BitmapFromVector(Context context, int vectorResId) {
+        // below line is use to generate a drawable.
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+
+        // below line is use to set bounds to our vector drawable.
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+
+        // below line is use to create a bitmap for our
+        // drawable which we have added.
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+
+        // below line is use to add bitmap in our canvas.
+        Canvas canvas = new Canvas(bitmap);
+
+        // below line is use to draw our
+        // vector drawable in canvas.
+        vectorDrawable.draw(canvas);
+
+        // after generating our bitmap we are returning our bitmap.
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
     private void goToLocation(double latitude, double longitude) {
+
+
         LatLng latLng=new LatLng(latitude,longitude);
         if (latLng.equals(prev_latLng)){
             return;
@@ -127,6 +213,11 @@ public class MapScreen extends AppCompatActivity implements OnMapReadyCallback, 
     public void onMapReady(@NonNull GoogleMap googleMap) {
 
         myGoogleMap=googleMap;
+
+        String act=getIntent().getStringExtra("getDirection");
+        if (act.equals("getDirection")){
+            drawLine();
+        }
 //        myGoogleMap.setMyLocationEnabled(true);
     }
 

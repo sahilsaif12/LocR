@@ -10,17 +10,20 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.locr.HelperClasses.DirectionViewInterface;
 import com.example.locr.HelperClasses.HomeAdaptersHelperClasses.LocationHelperClass;
 import com.example.locr.R;
 
 import java.util.ArrayList;
 
 public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.LocationViewHolder>{
+    private final DirectionViewInterface directionViewInterface;
 
     ArrayList<LocationHelperClass> locations;
 
-    public LocationAdapter(ArrayList<LocationHelperClass> locations) {
+    public LocationAdapter(ArrayList<LocationHelperClass> locations,DirectionViewInterface directionViewInterface) {
         this.locations = locations;
+        this.directionViewInterface=directionViewInterface;
     }
 
 
@@ -50,6 +53,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Locati
         TextView name,address,distance;
         Button direction;
         ImageView image;
+
         public LocationViewHolder(@NonNull View itemView) {
             super(itemView);
             name=itemView.findViewById(R.id.location_name);
@@ -57,6 +61,18 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Locati
             distance=itemView.findViewById(R.id.location_distance);
             image=itemView.findViewById(R.id.location_img);
             direction=itemView.findViewById(R.id.get_location_direction);
+
+            direction.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (directionViewInterface!=null){
+                        int pos=getAdapterPosition();
+                        if (pos!=RecyclerView.NO_POSITION){
+                            directionViewInterface.onGetDirectionClick(pos,locations);
+                        }
+                    }
+                }
+            });
         }
     }
 }
