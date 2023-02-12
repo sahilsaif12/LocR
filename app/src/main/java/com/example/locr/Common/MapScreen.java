@@ -154,7 +154,6 @@ public class MapScreen extends AppCompatActivity implements OnMapReadyCallback, 
         ending_pos_circle.fillColor(0x9F9F9F9F);
         ending_pos_circle.strokeColor(0x00000000);
         myGoogleMap.addCircle(ending_pos_circle);
-
         CameraUpdate cameraUpdate= CameraUpdateFactory.newLatLngZoom(start_location,16);
         myGoogleMap.moveCamera(cameraUpdate);
         myGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -214,8 +213,8 @@ public class MapScreen extends AppCompatActivity implements OnMapReadyCallback, 
 
         myGoogleMap=googleMap;
 
-        String act=getIntent().getStringExtra("getDirection");
-        if (act.equals("getDirection")){
+        String act=getIntent().getStringExtra("activity");
+        if (act.equals("singleCategoryPlaces")){
             drawLine();
         }
 //        myGoogleMap.setMyLocationEnabled(true);

@@ -91,7 +91,7 @@ public class SingleCategoryPlaces extends AppCompatActivity implements Direction
         Intent intent=new Intent(getApplicationContext(), MapScreen.class);
         intent.putExtra("lat",location.get(position).getLat());
         intent.putExtra("lon",location.get(position).getLon());
-        intent.putExtra("getDirection","getDirection");
+        intent.putExtra("activity","singleCategoryPlaces");
         startActivity(intent);
     }
 }

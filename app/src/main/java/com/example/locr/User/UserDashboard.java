@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -114,6 +115,7 @@ public class UserDashboard extends AppCompatActivity implements NavigationView.O
             public void onClick(View view) {
                 if (isLocationPermissionGranted && isGpsEnable()){
                     Intent intent=new Intent(getApplicationContext(), MapScreen.class);
+                    intent.putExtra("activity","userDashboard");
                     startActivity(intent);
 
                 }
@@ -129,26 +131,33 @@ public class UserDashboard extends AppCompatActivity implements NavigationView.O
             }
         });
 
-
-        // saving current lat and long
-
-//        try {
-//            setData();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
-//        FetchingData fetchingData=new FetchingData();
-//        try {
-//            fetchingData.getLocationData(this,5000,"healthcare.hospital");
-//            Log.d("data", String.valueOf(data));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
     }
 
 
+    public void highlightedCategoryClicked(View view){
+        int id=view.getId();
+        switch (id){
+            case R.id.hotel_icon:{
+                fetchCategoryLocations("accommodation.hotel",R.drawable.hotel_icon);
+                break;
+            }
+            case R.id.restaurent_icon:{
+                fetchCategoryLocations("catering.restaurant",R.drawable.restaurant_icon);
+                break;
+            }
+            case R.id.education_icon:{
+                fetchCategoryLocations("education",R.drawable.education_icon);
+                break;
+            }
+            case R.id.shops_icon:{
+                fetchCategoryLocations("commercial.shopping_mall",R.drawable.shop_icon);
+                break;
+            }
+
+
+        }
+
+    }
     private boolean isGpsEnable(){
         LocationManager locationManager=(LocationManager) getSystemService(LOCATION_SERVICE);
         boolean providerEnable=locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -343,18 +352,47 @@ public class UserDashboard extends AppCompatActivity implements NavigationView.O
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
-            case R.id.nav_all_category:
+            case R.id.nav_all_category:{
                 startActivity(new Intent(getApplicationContext(),AllCategories.class));
+            }
+            case R.id.nav_hotels:{
+                drawerLayout.closeDrawer(GravityCompat.START);
+                fetchCategoryLocations("accommodation.hotel",R.drawable.hotel_icon);
+                break;
+            }
+            case R.id.nav_restaurent:{
+                drawerLayout.closeDrawer(GravityCompat.START);
+                fetchCategoryLocations("catering.restaurant",R.drawable.restaurant_icon);
+                break;
+            }
+            case R.id.nav_education:{
+                drawerLayout.closeDrawer(GravityCompat.START);
+                fetchCategoryLocations("education",R.drawable.education_icon);
+                break;
+            }
+            case R.id.nav_shops:{
+                drawerLayout.closeDrawer(GravityCompat.START);
+                fetchCategoryLocations("commercial.shopping_mall",R.drawable.shop_icon);
+                break;
+            }
         }
         return true;
     }
 
     @Override
     public void onItemClick(int position,ArrayList<CategoriesHelperClass> category) {
+        String category_id=category.get(position).getId();
+        int category_img=category.get(position).getImage();
+        fetchCategoryLocations(category_id,category_img);
+
+
+    }
+
+    private void fetchCategoryLocations(String id,int img) {
         loading_screen.setVisibility(View.VISIBLE);
         FetchingData fetchingData=new FetchingData();
         try {
-            fetchingData.getLocationData(this,5000,category.get(position).getId());
+            fetchingData.getLocationData(this,5000,id);
 //            Log.d("data", String.valueOf(data));
         } catch (IOException e) {
             e.printStackTrace();
@@ -369,15 +407,13 @@ public class UserDashboard extends AppCompatActivity implements NavigationView.O
                     Log.d("task","not null");
 //                    loading_screen.setVisibility(View.GONE);
                     Intent intent=new Intent(getApplicationContext(),SingleCategoryPlaces.class);
-                    intent.putExtra("id", category.get(position).getId());
-                    intent.putExtra("img", category.get(position).getImage());
+                    intent.putExtra("id", id);
+                    intent.putExtra("img", img);
                     startActivity(intent);
                     timer.cancel();
                 }
             }
         }, 0, 1000);
-
-
     }
 
     @Override

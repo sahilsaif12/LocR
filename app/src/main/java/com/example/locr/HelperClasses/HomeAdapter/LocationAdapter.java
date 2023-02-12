@@ -40,7 +40,8 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Locati
         LocationHelperClass locationHelperClass=locations.get(position);
         holder.name.setText(locationHelperClass.getName());
         holder.address.setText(locationHelperClass.getAddress());
-        holder.distance.setText(locationHelperClass.getDistance());
+        String dis=String.format("%.2f",Float.valueOf(locationHelperClass.getDistance())/1000);
+        holder.distance.setText(dis+" km");
         holder.image.setImageResource(locationHelperClass.getImage());
     }
 
