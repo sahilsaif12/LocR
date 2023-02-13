@@ -11,15 +11,15 @@
         style="@style/Widget.AppCompat.SeekBar"
         android:layout_width="336dp"
         android:layout_height="26dp"
-        android:layout_marginTop="44dp"
-        android:max="10000"
-        android:progress="500"
+        android:layout_marginTop="8dp"
+        android:max="50000"
+        android:progress="5000"
         android:progressTint="#FFA000"
         android:thumbTint="#FFA000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/radius_text" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/locationsRecycler"
@@ -31,6 +31,37 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/seekBar"
         app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <TextView
+        android:id="@+id/radius_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/baloo"
+        android:text="5 km"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RelativeLayout
+        android:id="@+id/locations_loading_screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#BE858080"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="74dp"
+            android:layout_height="73dp"
+            android:indeterminateTint="#FDAD26"
+            android:visibility="visible" />
+    </RelativeLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -88,38 +88,13 @@ public class MapScreen extends AppCompatActivity implements OnMapReadyCallback, 
         super.onBackPressed();
     }
 
+    // Initialize Map on the activity
     private void initMap() {
-//        if (isGpsEnable()) {
             SupportMapFragment supportMapFragment=(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_container);
             supportMapFragment.getMapAsync( this);
-//        }
     }
 
-//    @SuppressLint("MissingPermission")
-//    private void getCurrLoc() {
-//        mLocationClient= LocationServices.getFusedLocationProviderClient(this);
-//        CancellationTokenSource cancellationTokenSource=new CancellationTokenSource();
-//        mLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY,cancellationTokenSource.getToken()).addOnSuccessListener(this, new OnSuccessListener<Location>() {
-//                    @Override
-//                    public void onSuccess(Location location) {
-//                        // Got last known location. In some rare situations this can be null.
-//                        if (location != null) {
-//                            // Logic to handle location object
-//                            goToLocation(location.getLatitude(),location.getLongitude());
-//                        }
-//                        else {
-//                            Toast.makeText(MapScreen.this, "Something went wrong in accessing location", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
-////        mLocationClient.getLastLocation().addOnCompleteListener(task -> {
-////            if (task.isComplete()){
-//
-////            }
-////        });
-//    }
-
-
+    // Drawing a line between two distance(Latlon)
     private void drawLine() {
         LatLng start_location=new LatLng(UserDashboard.lat, UserDashboard.lon);
         LatLng end_location=new LatLng(destination_lat,destination_lon);
@@ -160,6 +135,7 @@ public class MapScreen extends AppCompatActivity implements OnMapReadyCallback, 
 
     }
 
+    // Adding a custom icon as location marker
     private BitmapDescriptor BitmapFromVector(Context context, int vectorResId) {
         // below line is use to generate a drawable.
         Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
@@ -181,6 +157,8 @@ public class MapScreen extends AppCompatActivity implements OnMapReadyCallback, 
         // after generating our bitmap we are returning our bitmap.
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
+
+    // Going to current location on map
     private void goToLocation(double latitude, double longitude) {
 
 

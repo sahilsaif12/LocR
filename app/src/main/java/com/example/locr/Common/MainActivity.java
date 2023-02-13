@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
                 onBoardingScreen=getSharedPreferences("onBoarding",MODE_PRIVATE);
                 boolean isFirstTime=onBoardingScreen.getBoolean("isFirstTime",true);
 
+                // Checking the user open the app first time or not so that it can decide to show OnBoarding screen or not
                 if (isFirstTime){
                     SharedPreferences.Editor editor=onBoardingScreen.edit();
                     editor.putBoolean("isFirstTime",false);

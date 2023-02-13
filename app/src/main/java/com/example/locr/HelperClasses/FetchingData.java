@@ -46,7 +46,7 @@ public class FetchingData {
                 Request request = null;
                 try {
                     request = new Request.Builder()
-                            .url(new URL("https://api.geoapify.com/v2/places?categories="+ category_id +"&filter=circle:" +lon+","+lat+"," +radius+"&bias=proximity:"+lon+","+lat +"&limit=50&apiKey=" +bundle.get("geoapify_key")))
+                            .url(new URL("https://api.geoapify.com/v2/places?categories="+ category_id +"&filter=circle:" +lon+","+lat+"," +radius+"&bias=proximity:"+lon+","+lat +"&limit=200&apiKey=" +bundle.get("geoapify_key")))
                             .method("GET", null)
                             .build();
                 } catch (MalformedURLException e) {
@@ -67,7 +67,7 @@ public class FetchingData {
 //                    Log.d("data1", s);
 //                    Log.d("data1", String.valueOf(data));
 
-                    Log.d("data1", String.valueOf("https://api.geoapify.com/v2/places?categories="+ category_id +"&filter=circle:" +lon+","+lat+"," +radius+"&bias=proximity:"+lon+","+lat +"&limit=50&apiKey=" +bundle.get("geoapify_key")));
+                    Log.d("data1", String.valueOf("https://api.geoapify.com/v2/places?categories="+ category_id +"&filter=circle:" +lon+","+lat+"," +radius+"&bias=proximity:"+lon+","+lat +"&limit=200&apiKey=" +bundle.get("geoapify_key")));
 
 
                 } catch (IOException | JSONException e) {

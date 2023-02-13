@@ -6,11 +6,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.example.locr.HelperClasses.CategoryViewInterface;
@@ -34,7 +32,7 @@ public class AllCategories extends AppCompatActivity implements CategoryViewInte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_categories);
         all_category_recycler=findViewById(R.id.all_category_recycler);
-        loading_screen=findViewById(R.id.loading_screen);
+        loading_screen=findViewById(R.id.all_category_loading_screen);
         loading_screen.setVisibility(View.GONE);
         allCategoryRecycler();
     }
@@ -43,6 +41,7 @@ public class AllCategories extends AppCompatActivity implements CategoryViewInte
         super.onBackPressed();
     }
 
+// All category recycler view setter
     private void allCategoryRecycler() {
 
         GradientDrawable gradient1, gradient2,gradient3,gradient4,gradient5,gradient6,gradient7,gradient8;
@@ -104,11 +103,8 @@ public class AllCategories extends AppCompatActivity implements CategoryViewInte
         all_category_recycler.setAdapter(adapter);
     }
 
-    public void openFeatureCategory(String category){
 
-    }
-
-
+// open Locations page of desired category
     @Override
     public void onItemClick(int position,ArrayList<CategoriesHelperClass> category) {
         loading_screen.setVisibility(View.VISIBLE);

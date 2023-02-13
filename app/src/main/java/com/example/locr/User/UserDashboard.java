@@ -134,6 +134,7 @@ public class UserDashboard extends AppCompatActivity implements NavigationView.O
     }
 
 
+    // Actions while highlighted category buttons clicked on home page
     public void highlightedCategoryClicked(View view){
         int id=view.getId();
         switch (id){
@@ -158,6 +159,8 @@ public class UserDashboard extends AppCompatActivity implements NavigationView.O
         }
 
     }
+
+    // Checking if GPS is enabled or not. If not then it's enable gps
     private boolean isGpsEnable(){
         LocationManager locationManager=(LocationManager) getSystemService(LOCATION_SERVICE);
         boolean providerEnable=locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -184,7 +187,7 @@ public class UserDashboard extends AppCompatActivity implements NavigationView.O
         return false;
     }
 
-
+    // Getting the user's current location's lat lon
     @SuppressLint("MissingPermission")
     public void getCurrentLatLon() {
         FusedLocationProviderClient mLocationClient= LocationServices.getFusedLocationProviderClient(this);
@@ -202,6 +205,7 @@ public class UserDashboard extends AppCompatActivity implements NavigationView.O
         });
     }
 
+    // Taking Location permissions
     private void checkMyPermission() {
         Dexter.withContext(this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(new PermissionListener() {
             @Override
@@ -227,7 +231,6 @@ public class UserDashboard extends AppCompatActivity implements NavigationView.O
         }).check();
     }
 
-
     // Navigation Drawer functions
     private void navigationDrawer() {
         navigationView.bringToFront();
@@ -244,14 +247,8 @@ public class UserDashboard extends AppCompatActivity implements NavigationView.O
             }
         });
     }
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerVisible(GravityCompat.START))
-            drawerLayout.closeDrawer(GravityCompat.START);
-        else
-            super.onBackPressed();
-    }
 
+    // Animation of navigation sidebar while opening and closing
     private void animateNavigationDrawer() {
 
         drawerLayout.setScrimColor(getResources().getColor(R.color.fade_color));
@@ -286,7 +283,20 @@ public class UserDashboard extends AppCompatActivity implements NavigationView.O
             }
         });
     }
-    // Recycler views funcitons
+
+    // while sidebar is opened if back button pressed it close the sidebar
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerVisible(GravityCompat.START))
+            drawerLayout.closeDrawer(GravityCompat.START);
+        else
+            super.onBackPressed();
+    }
+
+
+    // ----- Recycler views funcitons -----
+
+
     private void categoryRecycler() {
 
         gradient1 = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{0xffDEB55D, 0xFFC5BDBD});
@@ -349,6 +359,8 @@ public class UserDashboard extends AppCompatActivity implements NavigationView.O
         most_viewed_recycler.setAdapter(adapter);
     }
 
+
+    // Actions while any item on navigation sidebar clicked
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
@@ -379,6 +391,7 @@ public class UserDashboard extends AppCompatActivity implements NavigationView.O
         return true;
     }
 
+    // While clicking on any category view
     @Override
     public void onItemClick(int position,ArrayList<CategoriesHelperClass> category) {
         String category_id=category.get(position).getId();
@@ -388,6 +401,7 @@ public class UserDashboard extends AppCompatActivity implements NavigationView.O
 
     }
 
+    // Fetching the location data of the desirable category
     private void fetchCategoryLocations(String id,int img) {
         loading_screen.setVisibility(View.VISIBLE);
         FetchingData fetchingData=new FetchingData();

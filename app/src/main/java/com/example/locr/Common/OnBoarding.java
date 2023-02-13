@@ -24,7 +24,7 @@ public class OnBoarding extends AppCompatActivity {
     LinearLayout dotsLayout;
     SliderAdapter sliderAdapter;
     TextView[] dots;
-    Button letsGetStarted;
+    Button letsGetStarted,nextBtn;
     Animation animation;
     int current_pos;
     @Override
@@ -36,6 +36,7 @@ public class OnBoarding extends AppCompatActivity {
         slider=findViewById(R.id.slider);
         dotsLayout=findViewById(R.id.dots);
         letsGetStarted=findViewById(R.id.letsGetStarted);
+        nextBtn=findViewById(R.id.nextBtn);
 
         sliderAdapter=new SliderAdapter(this);
         slider.setAdapter(sliderAdapter);
@@ -81,6 +82,7 @@ public class OnBoarding extends AppCompatActivity {
             }
             else{
                 letsGetStarted.setVisibility(View.VISIBLE);
+                nextBtn.setVisibility(View.INVISIBLE);
                 animation= AnimationUtils.loadAnimation(OnBoarding.this,R.anim.bottom_animation);
                 animation.setDuration(500);
                 letsGetStarted.setAnimation(animation);

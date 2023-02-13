@@ -7,10 +7,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.locr.Common.MapScreen;
 import com.example.locr.HelperClasses.DirectionViewInterface;
+import com.example.locr.HelperClasses.FetchingData;
 import com.example.locr.HelperClasses.HomeAdapter.LocationAdapter;
 import com.example.locr.HelperClasses.HomeAdaptersHelperClasses.LocationHelperClass;
 import com.example.locr.R;
@@ -19,31 +23,95 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class SingleCategoryPlaces extends AppCompatActivity implements DirectionViewInterface {
 
     RecyclerView location_recycler;
     RecyclerView.Adapter adapter;
     Double lat,lon;
+    TextView radius_text;
+    SeekBar seekBar;
+    RelativeLayout loading_screen;
+    ArrayList<LocationHelperClass> locations=new ArrayList<>();
     int img;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_category_places);
-//        String id=getIntent().getStringExtra("id");
+        loading_screen=findViewById(R.id.locations_loading_screen);
+        String id=getIntent().getStringExtra("id");
         img=getIntent().getIntExtra("img",0);
-//        category_id.setText(id);
+
 
         location_recycler=findViewById(R.id.locationsRecycler);
-            locationRecycler();
+        locationRecycler();
+
+
+        seekBar=findViewById(R.id.seekBar);
+        radius_text=findViewById(R.id.radius_text);
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            int prog;
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                prog = ((int)Math.round(progress/1000))*1000;
+                if (fromUser){
+                    radius_text.setText(String.valueOf(prog/1000)+" km");
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                Log.d("check","start tracking");
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                try {
+                    loading_screen.setVisibility(View.VISIBLE);
+                    UserDashboard.data=null;
+                    FetchingData fetchingData=new FetchingData();
+                    fetchingData.getLocationData(SingleCategoryPlaces.this,prog,id);
+                    locations.clear();
+                    adapter.notifyDataSetChanged();
+
+                    Timer timer = new Timer();
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            Log.d("msg", "running");
+                            if (UserDashboard.data!=null) {
+                                runOnUiThread(new Runnable() { // important to run on a different thread
+                                    @Override
+                                    public void run() {
+                                        Log.d("msg", "not null");
+                                        locationRecycler();
+                                    }
+                                });
+                                timer.cancel();
+                            }
+                        }
+                    }, 0, 500);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Log.d("check","stop tracking");
+            }
+        });
 
     }
 
+    // All locations of a category Recycler view
     private void locationRecycler()  {
+        loading_screen.setVisibility(View.GONE);
         location_recycler.setHasFixedSize(true);
         location_recycler.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
-        ArrayList<LocationHelperClass> locations=new ArrayList<>();
+
         JSONArray data=UserDashboard.data;
         Log.d("data", String.valueOf(data));
         for (int i=0;i<data.length();i++){
@@ -66,26 +134,20 @@ public class SingleCategoryPlaces extends AppCompatActivity implements Direction
                 e.printStackTrace();
             }
         }
-//        locations.add(new LocationHelperClass("Djlkfjl fkjdsifjjiejij wij9jijidj dfjijdflkj lkj klj kjijoij  jlkjk","slkfjdkljf ejieoijej dfjdlfhdj eqiijowij ew dsdhuhoqij dsijdifjsdijsd dijsdj","2803",img,UserDashboard.lat,UserDashboard.lon));
-//        locations.add(new LocationHelperClass("Djlkfjl","LdSJLKJLFJFLHOUEHUOE LEJJD OIEHOUEH","2803",img,UserDashboard.lat,UserDashboard.lon));
-//        locations.add(new LocationHelperClass("Djlkfjl","LdSJLKJLFJFLHOUEHUOE LEJJD OIEHOUEH","2803",img,UserDashboard.lat,UserDashboard.lon));
-//        locations.add(new LocationHelperClass("Djlkfjl","LdSJLKJLFJFLHOUEHUOE LEJJD OIEHOUEH","2803",img,UserDashboard.lat,UserDashboard.lon));
-//        locations.add(new LocationHelperClass("Djlkfjl","LdSJLKJLFJFLHOUEHUOE LEJJD OIEHOUEH","2803",img,UserDashboard.lat,UserDashboard.lon));
-//        locations.add(new LocationHelperClass("Djlkfjl","LdSJLKJLFJFLHOUEHUOE LEJJD OIEHOUEH","2803",img,UserDashboard.lat,UserDashboard.lon));
-//        locations.add(new LocationHelperClass("Djlkfjl","LdSJLKJLFJFLHOUEHUOE LEJJD OIEHOUEH","2803",img,UserDashboard.lat,UserDashboard.lon));
         adapter =new LocationAdapter(locations,this);
         location_recycler.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
     }
 
+    //when back pressed the main data should be none so that data can be updated whenever this page occurs
     @Override
     public void onBackPressed() {
         UserDashboard.data=null;
         super.onBackPressed();
     }
 
-
+    //Click on the Get direction button on any location view
     @Override
     public void onGetDirectionClick(int position, ArrayList<LocationHelperClass> location) {
         Intent intent=new Intent(getApplicationContext(), MapScreen.class);
